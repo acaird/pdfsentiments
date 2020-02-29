@@ -12,3 +12,25 @@
 
   I thought this would be harder, but it wasn't very hard, there are
   some nice Python libraries to do all of these things.
+
+* My Library to Wrap the Other Libraries
+
+  I made a library called PdfDocument that wraps [[https://pypi.org/project/pdfminer/][PDFMiner]] and [[https://github.com/cjhutto/vaderSentiment][NLTK
+  VADER]] that exposes the text of the document, it's PDF document
+  information, the PDF document creation time, and the sentiment
+  information of the PDF document.
+
+* Sample Client
+
+  There is a simple client that takes the names of PDF files via the
+  command line and reports the names, PDF file creation date, and the
+  sentiment analysis of the document, its output looks like:
+  #+BEGIN_EXAMPLE
+    ./pdfsentiment.py -f examples/tb125heff-newusers.pdf
+    examples/tb125heff-newusers.pdf 2019-09-15 23:48:52
+    {'neg': 0.047, 'neu': 0.872, 'pos': 0.081, 'compound': 0.9963}
+  #+END_EXAMPLE
+
+* Summary
+
+  This is an example of how easy this is if you are super lazy.
