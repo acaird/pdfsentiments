@@ -15,10 +15,11 @@
 
 * My Library to Wrap the Other Libraries
 
-  I made a library called PdfDocument that wraps [[https://pypi.org/project/pdfminer/][PDFMiner]] and [[https://github.com/cjhutto/vaderSentiment][NLTK
-  VADER]] that exposes the text of the document, it's PDF document
-  information, the PDF document creation time, and the sentiment
-  information of the PDF document.
+  I made a library called PdfDocument that wraps [[https://pypi.org/project/pdfminer/][PDFMiner]]
+  (specifically the [[https://pdfminer-docs.readthedocs.io/programming.html][programming]] section) and [[https://github.com/cjhutto/vaderSentiment][NLTK VADER]] that exposes
+  the text of the document, it's PDF document information, the PDF
+  document creation time, and the sentiment information of the PDF
+  document.
 
 * Sample Client
 
