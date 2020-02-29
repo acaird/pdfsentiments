@@ -6,7 +6,9 @@ from PdfDocument.PdfDocument import PdfDocument
 
 def process_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-f", "--file", help="file or files to process", nargs="+")
+    parser.add_argument(
+        "-f", "--file", help="PDF file or files to process", nargs="+", required=True
+    )
 
     return parser.parse_args()
 
