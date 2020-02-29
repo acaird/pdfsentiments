@@ -1,57 +1,100 @@
 #!/usr/bin/env python3
 import sys
+from io import StringIO
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-from pdfminer.pdfparser import PDFParser
+
+from pdfminer.converter import TextConverter
+from pdfminer.layout import LAParams
+from pdfminer.pdfdevice import PDFDevice
 from pdfminer.pdfdocument import PDFDocument
-from pdfminer.pdfpage import PDFPage
-from pdfminer.converter import XMLConverter, HTMLConverter, TextConverter
-from pdfminer.pdfpage import PDFTextExtractionNotAllowed
 from pdfminer.pdfinterp import PDFResourceManager
 from pdfminer.pdfinterp import PDFPageInterpreter
-from pdfminer.pdfdevice import PDFDevice
-from pdfminer.layout import LAParams
-from io import StringIO
+from pdfminer.pdfpage import PDFPage
+from pdfminer.pdfpage import PDFTextExtractionNotAllowed
+from pdfminer.pdfparser import PDFParser
 
+"""Use the laziest possible sentiment analysis on PDF files
 
-def analyze(pdffile):
-    laparams = LAParams()
-    laparams.all_texts = True
-    outfp = sys.stdout
-    sio = StringIO()
-    # Open a PDF file.
-    fp = open(pdffile, "rb")
-    # Create a PDF parser object associated with the file object.
-    parser = PDFParser(fp)
-    # Create a PDF document object that stores the document structure.
-    # Supply the password for initialization.
-    document = PDFDocument(parser)
-    # Check if the document allows text extraction. If not, abort.
-    if not document.is_extractable:
-        raise PDFTextExtractionNotAllowed
-    # Create a PDF resource manager object that stores shared resources.
-    rsrcmgr = PDFResourceManager()
-    # Create a PDF device object.
-    device = PDFDevice(rsrcmgr)
-    device = TextConverter(rsrcmgr, sio, laparams=laparams)
+I just Googled some stuff.
 
-    # Create a PDF interpreter object.
-    interpreter = PDFPageInterpreter(rsrcmgr, device)
-    # Process each page contained in the document.
-    for page in PDFPage.create_pages(document):
-        interpreter.process_page(page)
+Plus, I read this:
+   https://monkeylearn.com/sentiment-analysis/
+but didn't really pay attention to it
+"""
 
-    text = sio.getvalue()
-    fp.close()
-    device.close()
-    sio.close()
+class PdfDocument:
+    """A PdfDocument Object
 
-    sid = SentimentIntensityAnalyzer()
-    scores = sid.polarity_scores(text)
+    Contains the text and PDF document information and offers a
+    sentiment method that runs a simplistic sentiment analysis on the
+    text of the PDF file
 
-    for key in sorted(scores):
-        print("{0}: {1}, ".format(key, scores[key]), end="")
+    """
+    def __init__(self, pdffile):
+        """Create the PDF Document object
 
-    print()
+        Reads a PDF file and turns it into a text string and extracts
+        some document info
+
+        """
+        self.scores = {}
+        laparams = LAParams()
+        laparams.all_texts = True
+        sio = StringIO()
+
+        fp = open(pdffile, "rb")
+        # Create a PDF document object that stores the document structure.
+        # Supply the password for initialization.
+        document = PDFDocument(PDFParser(fp))
+
+        # Check if the document allows text extraction. If not, abort.
+        if not document.is_extractable:
+            raise PDFTextExtractionNotAllowed
+        # Create a PDF resource manager object that stores shared resources.
+        rsrcmgr = PDFResourceManager()
+        # Create a PDF device object.
+        device = PDFDevice(rsrcmgr)
+        device = TextConverter(rsrcmgr, sio, laparams=laparams)
+
+        # Create a PDF interpreter object.
+        interpreter = PDFPageInterpreter(rsrcmgr, device)
+        # Process each page contained in the document.
+        for page in PDFPage.create_pages(document):
+            interpreter.process_page(page)
+
+        self.pdffile_text = sio.getvalue()
+        self.info = document.info
+        self.creation_date = self.info[0]['CreationDate']
+        fp.close()
+        device.close()
+        sio.close()
+
+    def sentiment(self):
+        """Run a simplistic sentiment analysis
+
+        Use the NLTK VADER (https://github.com/cjhutto/vaderSentiment)
+        library to get polarity scores
+
+        From
+        https://github.com/cjhutto/vaderSentiment#about-the-scoring
+
+        > The compound score is computed by summing the valence scores
+          of each word in the lexicon, adjusted according to the
+          rules, and then normalized to be between -1 (most extreme
+          negative) and +1 (most extreme positive). This is the most
+          useful metric if you want a single unidimensional measure of
+          sentiment for a given sentence. Calling it a 'normalized,
+          weighted composite score' is accurate.
+
+        > The pos, neu, and neg scores are ratios for proportions of
+          text that fall in each category (so these should all add up
+          to be 1... or close to it with float operation). These are
+          the most useful metrics if you want multidimensional
+          measures of sentiment for a given sentence.
+
+        """
+        sid = SentimentIntensityAnalyzer()
+        self.scores = sid.polarity_scores(self.pdffile_text)
 
 
 if __name__ == "__main__":
@@ -65,4 +108,9 @@ if __name__ == "__main__":
 
     for pdffile in pdffiles:
         print(pdffile)
-        analyze(pdffile)
+
+        pdf = PdfDocument(pdffile)
+        print(pdf.info[0])
+
+        pdf.sentiment()
+        print(pdf.scores)
