@@ -34,3 +34,6 @@
 * Summary
 
   This is an example of how easy this is if you are super lazy.
+
+  Also, it was me who was grumpy, at least according to the NLTK Vader
+  library.  The articles were fine.
