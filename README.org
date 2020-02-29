@@ -1,0 +1,14 @@
+#+OPTIONS: toc:t ^:{} date:t email:nil author:nil
+#+TITLE: PDF File Sentiment Analyzer
+
+* Introduction
+
+  I was reading some PDFs that seemed very grumpy, but wanted to see
+  if it was actually me who was grumpy.
+
+  I thought one way would be to turn the PDF into text files then use
+  some sort of natural language processing sentiment library to
+  analyze them.
+
+  I thought this would be harder, but it wasn't very hard, there are
+  some nice Python libraries to do all of these things.
