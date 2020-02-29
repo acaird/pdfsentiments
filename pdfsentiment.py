@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+from datetime import datetime
 from io import StringIO
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
@@ -22,6 +23,7 @@ Plus, I read this:
 but didn't really pay attention to it
 """
 
+
 class PdfDocument:
     """A PdfDocument Object
 
@@ -30,6 +32,7 @@ class PdfDocument:
     text of the PDF file
 
     """
+
     def __init__(self, pdffile):
         """Create the PDF Document object
 
@@ -64,7 +67,11 @@ class PdfDocument:
 
         self.pdffile_text = sio.getvalue()
         self.info = document.info
-        self.creation_date = self.info[0]['CreationDate']
+        # 20190915234815+02'00'
+        self.creation_date = datetime.strptime(
+            str(self.info[0]["CreationDate"]).split("+")[0].split(":")[1],
+            "%Y%m%d%H%M%S",
+        )
         fp.close()
         device.close()
         sio.close()
@@ -107,10 +114,8 @@ if __name__ == "__main__":
     ]
 
     for pdffile in pdffiles:
-        print(pdffile)
-
         pdf = PdfDocument(pdffile)
-        print(pdf.info[0])
+        print(pdffile, pdf.creation_date)
 
         pdf.sentiment()
         print(pdf.scores)
