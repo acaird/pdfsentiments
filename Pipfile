@@ -20,7 +20,7 @@ six = "*"
 traitlets = "*"
 wcwidth = "*"
 Cython = "*"
-Pygments = "*"
+Pygments = "==2.7.4"
 
 [dev-packages]
 
