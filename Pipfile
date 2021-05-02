@@ -1,0 +1,28 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+appnope = "*"
+backcall = "*"
+decorator = "*"
+jedi = "*"
+nltk = "*"
+parso = "*"
+pdfminer = "*"
+pexpect = "*"
+pickleshare = "*"
+prompt-toolkit = "*"
+ptyprocess = "*"
+pycryptodome = "*"
+six = "*"
+traitlets = "*"
+wcwidth = "*"
+Cython = "*"
+Pygments = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
